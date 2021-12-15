@@ -1,0 +1,15 @@
+name: "my-website"
+navbar:
+  title: "Reference Documentation"
+  left:
+    - text: "About"
+      href: index.html
+    - text: "Stuff"
+      href: stuff.html
+output_dir: "."
+output:
+  html_document:
+    theme: flatly
+    highlight: textmate
+    toc: true 
+    toc_float: true 
