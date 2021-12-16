@@ -93,16 +93,20 @@ If one year has 0 absences (=100% encounter) it will throw errors with
 1. Model selection
 
 # Model Output
-1. Aniso.png
-1. center of gravity.png
-1. Data and knots.png: map of data locations, extrapolation grid, and knots
-1. Data_by_year:
-1. Effective_Area.png
-1. Index-Biomass.png
-!. In_dentisty-predicted.png
-1. quantile_residuals_on_map.png: residuals are the difference between the observed and the mean
-1. **Range edge** The default quantiles of biomass that are plotted are 5%, 50%, and 95%. 50% is the centroid — the center of the species’ biomass along that axis. 50% of the biomass is above it, and 50% below. The two plots give you the X and Y coordinates of the centroid.
-   + **Latitudinal (in northing, N_km)** range edge. The northern edge is BLUE (0.95 = 95% biomass) and the southern edges is RED (0.05 = 5% biomass). The centroid is GREEN (0.5 = 50% of biomass)
-   + **Longitudinal (in easting, E_km)** range edge. The eastern edge is BLUE (0.95 = 95% biomass) and the western edges is RED (0.05 = 5% biomass). The centroid is GREEN (0.5 = 50% of biomass).
-   + From Alexa Fredstone-Hermann: note that when these are up against the edge of the study domain, they aren’t super informative: they’re just telling you that this population is spread throughout the entire study domain. I haven’t used the longitude edges as much because biogeographic theory tends to really focus on latitudinal edges.
-  + To customize: in the past I’ve just written out the outputs used in the plots rather than customizing them directly. there might be a tidier way to do  that now, but in the past I edited the plotting code (https://github.com/James-Thorson-NOAA/FishStatsUtils/blob/main/R/plot_range_edge.R) to just write out the data (https://github.com/afredston/range-edge-niches/blob/master/functions/get_range_edge.R). and of course, that first link is where you’d go to edit the plots if you wanted to do that.
+1. **aniso.png**
+1. **center_of_gravity.png**: line graph of northing (left) and easting (right) by years, with CV (or CI?)
+1. **Data_and_knots.png**: 3 maps of data locations, extrapolation grid, and knots
+1. **Data_by_year**: maps of data locations for each year
+1. **Effective_Area.png**: line graph of effective area occupied (km^2) by year with (SE, CI??)
+1. **Index.csv** and **Index.png**: Index of abundance for Stock Synthesis (SS) software; standardized biomass and standard error for each year. Calculated as...
+1. **In_density-predicted.png**: Maps of predicted density across the extrapolation grid for each year. Note the legend for maximum and minimum values.
+1. **packageDescription.txt**: information about VAST
+1. **parameter_estimates.Rdata** and **parameter_estimates.txt**: parameter estimates, AIC, number of coefficients, SDs
+1. **quantile_residuals_on_map.png**: residuals are the difference between the observed and the mean, and the range here is 0 to 1, so how exactly are these standardized?
+1. **quantile_residuals.png**: Q-Q plot of observed vs. expected quantiles (left) and residuals vs. predicted.
+1. **RangeEdge** The default quantiles of biomass that are plotted are 5%, 50%, and 95%. 50% is the centroid — the center of the species’ biomass along that axis. 50% of the biomass is above it, and 50% below. The two plots give you the X and Y coordinates of the centroid.
+   + **RangeEdge-E_km.png** Longitudinal (in easting, E_km) range edge. The eastern edge is BLUE (0.95 = 95% biomass) and the western edges is RED (0.05 = 5% biomass). The centroid is GREEN (0.5 = 50% of biomass).
+   + **RangeEdge-N_km.png** Latitudinal (in northing, N_km) range edge. The northern edge is BLUE (0.95 = 95% biomass) and the southern edges is RED (0.05 = 5% biomass). The centroid is GREEN (0.5 = 50% of biomass)
+   + From Alexa Fredston-Hermann: note that when these are up against the edge of the study domain, they aren’t super informative: they’re just telling you that this population is spread throughout the entire study domain. I haven’t used the longitude edges as much because biogeographic theory tends to really focus on latitudinal edges.
+   + To customize: in the past I’ve just written out the outputs used in the plots rather than customizing them directly. there might be a tidier way to do  that now, but in the past I edited the plotting code (https://github.com/James-Thorson-NOAA/FishStatsUtils/blob/main/R/plot_range_edge.R) to just write out the data (https://github.com/afredston/range-edge-niches/blob/master/functions/get_range_edge.R). and of course, that first link is where you’d go to edit the plots if you wanted to do that.
+1. **settings.txt** summary of model settings
