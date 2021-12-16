@@ -13,7 +13,7 @@
 
 <meta name="date" content="2021-12-16" />
 
-<title>Stuff</title>
+<title>How to Use VAST</title>
 
 <script src="site_libs/header-attrs-2.11/header-attrs.js"></script>
 <script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
@@ -323,7 +323,7 @@ div.tocify {
   <a href="index.html">About</a>
 </li>
 <li>
-  <a href="stuff.html">Stuff</a>
+  <a href="a-vast-how-to.html">How to Use VAST</a>
 </li>
       </ul>
       <ul class="nav navbar-nav navbar-right">
@@ -337,15 +337,160 @@ div.tocify {
 
 
 
-<h1 class="title toc-ignore">Stuff</h1>
+<h1 class="title toc-ignore">How to Use VAST</h1>
 <h4 class="author">Janelle Morano</h4>
-<h4 class="date">2021-12-16</h4>
+<h4 class="date">16 Dec 2021</h4>
 
 </div>
 
 
-<div id="here" class="section level2">
-<h2>Here</h2>
+<p>As I work through VAST, these are the steps and explanations I’ve learned. <strong>Note: if you stumbled across this, this represents a work in progress and so may be filled with inaccuracies.</strong></p>
+<div id="resources" class="section level1">
+<h1>Resources</h1>
+<ul>
+<li>VAST on Github: <a href="https://github.com/James-Thorson-NOAA/VAST" class="uri">https://github.com/James-Thorson-NOAA/VAST</a></li>
+<li>Example applications: <a href="https://github.com/James-Thorson-NOAA/VAST/wiki" class="uri">https://github.com/James-Thorson-NOAA/VAST/wiki</a></li>
+<li>VAST inputs google doc from Cecilia O’Leary, Dave McGowan, Cole Monnahan <a href="https://docs.google.com/document/d/1pl3-q8zlSBqTmPNaSHJU67S_hwN5nok_I9LAr-Klyrw/edit?ts=608af437" class="uri">https://docs.google.com/document/d/1pl3-q8zlSBqTmPNaSHJU67S_hwN5nok_I9LAr-Klyrw/edit?ts=608af437</a></li>
+</ul>
+</div>
+<div id="r-libraries" class="section level1">
+<h1>R Libraries</h1>
+<p>You will need to install ‘VAST’. See the installation instructions: <a href="https://github.com/James-Thorson-NOAA/VAST" class="uri">https://github.com/James-Thorson-NOAA/VAST</a></p>
+<p>If you are creating a model with covariates, you will also need ‘splines’ and ‘effects’.</p>
+<pre class="r"><code>library(VAST)
+library(splines)  # Used to include basis-splines
+library(effects)  # Used to visualize covariate effects</code></pre>
+<p>Note your system info and versions of VAST, TMB, and Matrix. Interaction of specific versions of these have been problems in the past, but not always. And, certainly, there’s room for others to cause problems in the future.</p>
+<pre class="r"><code>sessionInfo()</code></pre>
+<pre><code>## R version 4.1.2 (2021-11-01)
+## Platform: x86_64-apple-darwin17.0 (64-bit)
+## Running under: macOS Big Sur 10.16
+## 
+## Matrix products: default
+## LAPACK: /Library/Frameworks/R.framework/Versions/4.1/Resources/lib/libRlapack.dylib
+## 
+## locale:
+## [1] en_US.UTF-8/en_US.UTF-8/en_US.UTF-8/C/en_US.UTF-8/en_US.UTF-8
+## 
+## attached base packages:
+## [1] splines   stats     graphics  grDevices utils     datasets  methods   base     
+## 
+## other attached packages:
+## [1] effects_4.2-0         carData_3.0-4         FishStatsUtils_2.10.2
+## [4] units_0.7-2           VAST_3.8.2            TMB_1.7.22           
+## 
+## loaded via a namespace (and not attached):
+##  [1] Rcpp_1.0.7       INLA_21.02.23    nloptr_1.2.2.3   bslib_0.3.1     
+##  [5] compiler_4.1.2   jquerylib_0.1.4  tools_4.1.2      boot_1.3-28     
+##  [9] digest_0.6.28    lme4_1.1-27.1    jsonlite_1.7.2   evaluate_0.14   
+## [13] nlme_3.1-153     lattice_0.20-45  rlang_0.4.12     Matrix_1.3-4    
+## [17] DBI_1.1.1        yaml_2.2.1       xfun_0.28        fastmap_1.1.0   
+## [21] stringr_1.4.0    knitr_1.36       mitools_2.4      sass_0.4.0      
+## [25] nnet_7.3-16      grid_4.1.2       R6_2.5.1         survival_3.2-13 
+## [29] rmarkdown_2.11   sp_1.4-6         minqa_1.2.4      magrittr_2.0.1  
+## [33] htmltools_0.5.2  MASS_7.3-54      insight_0.14.5   colorspace_2.0-2
+## [37] survey_4.1-1     stringi_1.7.5</code></pre>
+</div>
+<div id="required-data" class="section level1">
+<h1>Required Data</h1>
+<ul>
+<li><strong>Observation data</strong> or sample data (e.g., CPUE), a dataframe with
+<ul>
+<li>latitude</li>
+<li>longitude</li>
+<li>year</li>
+<li>catch, biomass or count</li>
+<li>area swept</li>
+<li>vessel</li>
+</ul></li>
+<li><strong>Covariate data</strong> or environmental data (e.g., depth, temp); a dataframe or matrix, n_observations x n_columns
+<ul>
+<li>latitude</li>
+<li>longitude</li>
+<li>year</li>
+<li>column for each covariate (the limit may be 2, but not sure)</li>
+</ul></li>
+<li><strong>Extrapolation grid</strong>, the grid over which predictions will be made. Lat/lon points with area that encompasses the statistical strata or the observation points
+<ul>
+<li>Region = ‘Other’ or is it “User” generates extrapolation grid based on the locations of sampling data.</li>
+<li>Thorson 2019 Fish Res recommends defining area included in any stock assessment for a fishery as spatial domain, even if no sampling data is available for portion of area.</li>
+</ul></li>
+</ul>
+</div>
+<div id="steps" class="section level1">
+<h1>Steps</h1>
+<ol style="list-style-type: decimal">
+<li>Prepare your data</li>
+<li>Create extrapolation grid</li>
+<li>Spatial settings</li>
+<li>Model settings</li>
+<li>Specified outputs</li>
+<li>Extrapolation, Region, &amp; Strata</li>
+<li>Data &amp; Covariates</li>
+<li>Make and optimize your model</li>
+</ol>
+<div id="prepare-data" class="section level2">
+<h2>1. Prepare Data</h2>
+<p>IMPORTANT: Check for NAs If one year has 0 absences (=100% encounter) it will throw errors with</p>
+<ol style="list-style-type: decimal">
+<li>Biomass data</li>
+<li>Habitat covariates</li>
+</ol>
+</div>
+</div>
+<div id="decisions" class="section level1">
+<h1>15 Decisions</h1>
+<ol style="list-style-type: decimal">
+<li>Spatial domain: extrapolation grid</li>
+<li>Categories to include (species or size or age)</li>
+<li>Analyze encounter, abundance, and/or biomass-sampling data</li>
+<li>Including spatial and/or spatio-temporal variation:</li>
+</ol>
+<ul>
+<li>Omega1 = spatial random effects for encounter probability</li>
+<li>Omega2 = spatial random effects for positive catch rates</li>
+<li>Epsilon1 = spatiotemporal random effects for encounter probability</li>
+<li>Epsilon2 = spatiotemporal random effects for encounter probability</li>
+</ul>
+<ol style="list-style-type: decimal">
+<li>Spatial smoother and resolution: SPDE approximation (default) with either isotropic Matern function (2D Mesh) or geometric anisotropy or isotropic exponential correlation function AND number of knots (the more the better)</li>
+</ol>
+<ul>
+<li>Method = ‘Mesh’ (default), ‘Grid’, ‘Spherical_mesh’</li>
+</ul>
+<ol style="list-style-type: decimal">
+<li>Number of spatial and spatio-temporal factors HELP</li>
+<li>Specifying temporal correlation on model components: fixed effect for each year and independent among years (default)</li>
+<li>Density covariates as a semi-parametric model HELP</li>
+<li>Accounting for catchability covariates and confounding variables</li>
+<li>Including area swept as a catchability covariate or offset</li>
+<li>Including vessel effects as overdispersion</li>
+<li>Choosing link functions and distributions</li>
+<li>Derived quantities (other output? HELP)</li>
+<li>Bias correction for derived quantities (HELP)</li>
+<li>Model selection</li>
+</ol>
+</div>
+<div id="model-output" class="section level1">
+<h1>Model Output</h1>
+<ol style="list-style-type: decimal">
+<li>Aniso.png</li>
+<li>center of gravity.png</li>
+<li>Data and knots.png: map of data locations, extrapolation grid, and knots</li>
+<li>Data_by_year:</li>
+<li>Effective_Area.png</li>
+<li>Index-Biomass.png !. In_dentisty-predicted.png</li>
+<li>quantile_residuals_on_map.png: residuals are the difference between the observed and the mean</li>
+<li><strong>Range edge</strong> The default quantiles of biomass that are plotted are 5%, 50%, and 95%. 50% is the centroid — the center of the species’ biomass along that axis. 50% of the biomass is above it, and 50% below. The two plots give you the X and Y coordinates of the centroid.
+<ul>
+<li><strong>Latitudinal (in northing, N_km)</strong> range edge. The northern edge is BLUE (0.95 = 95% biomass) and the southern edges is RED (0.05 = 5% biomass). The centroid is GREEN (0.5 = 50% of biomass)</li>
+<li><strong>Longitudinal (in easting, E_km)</strong> range edge. The eastern edge is BLUE (0.95 = 95% biomass) and the western edges is RED (0.05 = 5% biomass). The centroid is GREEN (0.5 = 50% of biomass).</li>
+<li>From Alexa Fredstone-Hermann: note that when these are up against the edge of the study domain, they aren’t super informative: they’re just telling you that this population is spread throughout the entire study domain. I haven’t used the longitude edges as much because biogeographic theory tends to really focus on latitudinal edges.</li>
+</ul></li>
+</ol>
+<ul>
+<li>To customize: in the past I’ve just written out the outputs used in the plots rather than customizing them directly. there might be a tidier way to do that now, but in the past I edited the plotting code (<a href="https://github.com/James-Thorson-NOAA/FishStatsUtils/blob/main/R/plot_range_edge.R" class="uri">https://github.com/James-Thorson-NOAA/FishStatsUtils/blob/main/R/plot_range_edge.R</a>) to just write out the data (<a href="https://github.com/afredston/range-edge-niches/blob/master/functions/get_range_edge.R" class="uri">https://github.com/afredston/range-edge-niches/blob/master/functions/get_range_edge.R</a>). and of course, that first link is where you’d go to edit the plots if you wanted to do that.</li>
+</ul>
 </div>
 
 

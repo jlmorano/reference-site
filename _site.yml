@@ -4,8 +4,8 @@ navbar:
   left:
     - text: "About"
       href: index.html
-    - text: "Stuff"
-      href: stuff.html
+    - text: "How to Use VAST"
+      href: a-vast-how-to.html
 output_dir: "."
 output:
   html_document:
