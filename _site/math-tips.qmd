@@ -1,0 +1,40 @@
+---
+title: "Math Refresher"
+about: 
+  template: trestles
+
+---
+
+## Matrices and Linear Algebra to Remember
+
+**Matrix Multiplication, Inner Dot Product**
+$$X^TY = [x_1...X_K]\begin{bmatrix}y_{1}\\
+...\\
+y_{K}
+\end{bmatrix} = \sum_{i=1}^{K} X_iY_i$$
+
+The dimensions of a matrix is measured as row by column, n x K. When multiplying 2 matrices of given dimensions, the inner product of the dimensions must match. The resulting matrix dimensions is the outer product. For example,
+A [3x1] matrix
+$$x = \begin{bmatrix}x_{1}\\
+x_{2}\\
+x_{3}
+\end{bmatrix}$$
+
+multiplied by a [2x3] matrix
+$$A = \begin{bmatrix}u_{1}& v_{1} & w_{1}\\
+u_{2}& v_{2} & w_{2}\\
+\end{bmatrix}$$
+
+Results in a 2x1 matrix
+$$xA = \begin{bmatrix}u_{1}& v_{1} & w_{1}\\
+u_{2}& v_{2} & w_{2}\\
+\end{bmatrix} 
+\begin{bmatrix}x_{1}\\
+x_{2}\\
+x_{3}
+\end{bmatrix}
+=
+\begin{bmatrix}u_{1}x_{1} + v_{1}x_{2} + w_{1}x_{3}\\
+u_{2}x_{1} + v_{2}x_{2} + w_{2}x_{2}\\
+\end{bmatrix}
+$$

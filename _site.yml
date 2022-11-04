@@ -1,15 +1,23 @@
-name: "my-website"
-navbar:
+project:
+  type: website
+  output-dir: docs
+
+website:
   title: "Reference Documentation"
+navbar:
   left:
     - text: "About"
-      href: index.html
+      href: index.qmd
     - text: "How to Use VAST"
-      href: a-vast-how-to.html
-output_dir: "."
-output:
-  html_document:
-    theme: flatly
-    highlight: textmate
-    toc: true 
-    toc_float: true 
+      href: a-vast-how-to.qmd
+    - text: "Statistical Stuff I Should Know"
+      href: stat-stuff.qmd
+    - text: "Math Refresher"
+      href: math-tips.qmd
+    - text: "Multivariate Stats Class Notes"
+      href: mvstats.qmd
+
+format:
+  html: 
+    theme: lux
+    font-family: serif;

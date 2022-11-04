@@ -1,0 +1,171 @@
+---
+title: "How to Use VAST"
+about: 
+  template: trestles
+
+---
+
+As I work through VAST, these are the steps and explanations I've learned. **Note: if you stumbled across this, this represents a work in progress and so may be filled with inaccuracies.**
+
+# Explanation of VAST
+
+
+$$p_1 (i) = \beta_1 (c_i,t_i) + \omega_1^* (s_i,c_i) + \epsilon_1^* (s_i,c_i,t_i) + \upsilon_1 (s_i,c_i,t_i ) + \zeta_1 (i)$$
+
+The vector autoregressive spatio-temporal model, VAST, is conceptually similar to a generalized linear model (GLM) to define linear predictors, a link function, and a distribution for the response. But VAST differs by defining two linear predictors, $p_1$ and $p_2$ for every observation i∈{1,2,…,n_i} or extrapolation-grid g∈{1,2,…,n_g}.
+
+* For continuous data: linear predictors are transformed by a bivariate link function to calculate encounter probabilities and predicted densities for each observation (to calculate the likelihood to estimate parameters) or extrapolation-grid (to calculate spatially aggregated estimates of ecological variables).
+* For discrete data: predictors are transformed to calculate zero-inflation probabilities and the expected data for a counting process.
+
+For each linear predictor, VAST fits to observations i and predicts densities at extrapolation-grids g across a continuous spatial domain {s_i,s_g}∈R^2 and discrete time-intervals t∈{t_1,t_2,…,n_t} for each category c∈{c_1,c_2,…,n_c}. 
+
+Each linear predictor is decomposed into temporal main effects $\beta (c,t)$, spatial main effects $\omega (s,c)$, and spatio-temporal effects $\epsilon (s,c,t)$.  
+
+1. Density covariates x(s,c,t,p), which are used in the linear predictor for both observations i and extrapolation-grids g, and therefore approximate processes that affect true underlying densities or variables.
+
+1. Detectability covariates q(i,k), which are only used in the linear predictor for observations i and not extrapolation-grids g.  Detectability covariates therefore measure processes that affect sampling but do not reflect underlying densities, i.e., sampling gears or processes (e.g., time of day) that are “filtered-out” when predicting densities.  
+
+
+Reference: Thorson, Barnes, Friedman, Morano, Sipple. In Review.
+
+
+# Resources
+* VAST on Github: https://github.com/James-Thorson-NOAA/VAST
+* Example applications: https://github.com/James-Thorson-NOAA/VAST/wiki
+* VAST inputs google doc from Cecilia O'Leary, Dave McGowan, Cole Monnahan
+https://docs.google.com/document/d/1pl3-q8zlSBqTmPNaSHJU67S_hwN5nok_I9LAr-Klyrw/edit?ts=608af437
+
+# R Libraries
+
+You will need to install 'VAST'. See the installation instructions: https://github.com/James-Thorson-NOAA/VAST
+
+If you are creating a model with covariates, you will also need 'splines' and 'effects'.
+
+```{r libraries, message = FALSE}
+library(VAST)
+library(splines)  # Used to include basis-splines
+library(effects)  # Used to visualize covariate effects
+```
+
+Note your system info and versions of VAST, TMB, and Matrix. Interaction of specific versions of these have been problems in the past, but not always. And, certainly, there's room for others to cause problems in the future.
+
+```{r session}
+sessionInfo()
+```
+
+# Required Data
+
+* **Observation data** or sample data (e.g., CPUE), a dataframe with. Missing data for time (i.e., missing years) or missing covariate data for observation data (vice versa) will result in an error.
+   + latitude
+   + longitude
+   + year
+   + catch, biomass or count
+   + area swept
+   + vessel
+* **Covariate data** or environmental data (e.g., depth, temp); a dataframe or matrix, n_observations x n_columns. Missing data for time (i.e., missing years) or missing covariate data for observation data (vice versa) will result in an error.
+   + latitude
+   + longitude
+   + year
+   + column for each covariate (the limit may be 2, but not sure)
+* **Extrapolation grid**, the grid over which predictions will be made. Lat/lon points with area that encompasses the statistical strata or the observation points
+   + Region = 'Other' or is it "User" generates extrapolation grid based on the locations of sampling data.
+   + Thorson 2019 Fish Res recommends defining area included in any stock assessment for a fishery as spatial domain, even if no sampling data is available for portion of area.
+
+# Steps
+1. Prepare your data
+1. Create extrapolation grid
+1. Spatial settings
+1. Model settings
+1. Specified outputs
+1. Extrapolation, Region, & Strata
+1. Data & Covariates
+1. Make and optimize your model
+
+## 1. Prepare Data
+IMPORTANT: Check for NAs. Missing observation or covariate data, including incomplete sample sites without covariate data and non-continuous years, will result in an error.
+If one year has 0 absences (=100% encounter) it will throw errors.
+
+1. Biomass data
+1. Habitat covariates
+
+# 15 Decisions
+1. Spatial domain: extrapolation grid
+1. Categories to include (species or size or age)
+1. Analyze encounter, abundance, and/or biomass-sampling data
+1. Including spatial and/or spatio-temporal variation:
+  + Omega1 = spatial random effects for encounter probability
+  + Omega2 = spatial random effects for positive catch rates
+  + Epsilon1 = spatiotemporal random effects for encounter probability
+  + Epsilon2 = spatiotemporal random effects for encounter probability
+1. Spatial smoother and resolution: SPDE approximation (default) with either isotropic Matern function (2D Mesh) or geometric anisotropy or isotropic  exponential correlation function AND number of knots (the more the better)
+  + Method = 'Mesh' (default), 'Grid', 'Spherical_mesh'
+1. Number of spatial and spatio-temporal factors HELP
+1. Specifying temporal correlation on model components: fixed effect for each year and independent among years (default)
+1. Density covariates as a semi-parametric model HELP
+1. Accounting for catchability covariates and confounding variables
+1. Including area swept as a catchability covariate or offset
+1. Including vessel effects as overdispersion
+1. Choosing link functions and distributions
+1. Derived quantities (other output? HELP)
+1. Bias correction for derived quantities (HELP)
+1. Model selection
+
+# Model Input
+1. FieldConfig: Specify the number of factors for spatial, spatiotemporal, and intercept variation
+  1. Omega1 = spatial random effects for encounter probability
+  1. Omega2 = spatial random effects for positive catch rates
+  1. Epsilon1/Epsilon2= same except for spatiotemporal 
+  1. Beta1/Beta2 Number of factors for intercepts (factor analysis for years)
+  1. 0 = off, 1 = on, “IID” implies no correlation among categories, used for beta (this is the heart of “spatial factor analysis”.) Betas typically ‘IID’ unless using undocumented feature, then >1
+  
+1. RhoConfig: determines if there’s autocorrelation across time.
+  1. Beta1 = autocorrelation for encounter probability intercept
+  1. Beta2 =  autocorrelation for positive catch rates intercept
+  1. Epsilon1 = spatiotemporal variation for encounter probability
+  1. Epsilon2 = spatiotemporal variation for positive catch rates
+0 = off
+1 = autocorrelation is white noise (independent among years)
+2 = autocorrelation follows a random walk
+3 = autocorrelation is a fixed effect among years
+4 = autocorrelation follows an AR1 process (i.e. lag of 1 year)
+
+1. X1_formula is for the first linear predictor and X2_formula is for the second linear predictor
+
+# Model Output
+1. **aniso.png**
+1. **center_of_gravity.png**: line graph of northing (left) and easting (right) by years, with CV (or CI?)
+1. **Data_and_knots.png**: 3 maps of data locations, extrapolation grid, and knots
+1. **Data_by_year**: maps of data locations for each year
+1. **Effective_Area.png**: line graph of effective area occupied (km^2) by year with (SE, CI??)
+1. **Index.csv** and **Index.png**: Index of abundance for Stock Synthesis (SS) software; standardized biomass and standard error for each year. Calculated as...
+1. **In_density-predicted.png**: Maps of predicted density across the extrapolation grid for each year. Note the legend for maximum and minimum values.
+1. **packageDescription.txt**: information about VAST
+1. **parameter_estimates.Rdata** and **parameter_estimates.txt**: parameter estimates, AIC, number of coefficients, SDs
+  *beta1_ft: estimates of the encounter probabilities, one for each year
+  *beta2_ft: intercepts for year effect
+  *gamma1_cp: effect of density covariates
+  *L_omega1_z: trimmed cholesky pointwise variance in spatial variation
+  *L_epsilon1_z: trimmed cholesky pointwise variance in spatio-temporal variation
+  *logkappa1: decorrelation rate
+  *gamma2_cp:
+  L-omega2_z:
+  L_epsilon2_z:
+  logkappa2:
+  logSigmaM:
+  
+1. **quantile_residuals_on_map.png**: residuals are the difference between the observed and the mean, and the range here is 0 to 1, so how exactly are these standardized?
+1. **quantile_residuals.png**: Q-Q plot of observed vs. expected quantiles (left) and residuals vs. predicted.
+1. **RangeEdge** The default quantiles of biomass that are plotted are 5%, 50%, and 95%. 50% is the centroid — the center of the species’ biomass along that axis. 50% of the biomass is above it, and 50% below. The two plots give you the X and Y coordinates of the centroid.
+   + **RangeEdge-E_km.png** Longitudinal (in easting, E_km) range edge. The eastern edge is BLUE (0.95 = 95% biomass) and the western edges is RED (0.05 = 5% biomass). The centroid is GREEN (0.5 = 50% of biomass).
+   + **RangeEdge-N_km.png** Latitudinal (in northing, N_km) range edge. The northern edge is BLUE (0.95 = 95% biomass) and the southern edges is RED (0.05 = 5% biomass). The centroid is GREEN (0.5 = 50% of biomass)
+   + From Alexa Fredston-Hermann: note that when these are up against the edge of the study domain, they aren’t super informative: they’re just telling you that this population is spread throughout the entire study domain. I haven’t used the longitude edges as much because biogeographic theory tends to really focus on latitudinal edges.
+   + To customize: in the past I’ve just written out the outputs used in the plots rather than customizing them directly. there might be a tidier way to do  that now, but in the past I edited the plotting code (https://github.com/James-Thorson-NOAA/FishStatsUtils/blob/main/R/plot_range_edge.R) to just write out the data (https://github.com/afredston/range-edge-niches/blob/master/functions/get_range_edge.R). and of course, that first link is where you’d go to edit the plots if you wanted to do that.
+1. **settings.txt** summary of model settings
+1. Fit$data_frame
+  *Lat_i:
+  *Lon_i:
+  *a_i: area swept
+  *v_i:
+  *b_i: catch
+  *t_i: year
+  *c_iz:
