@@ -8,6 +8,7 @@ navbar:
   left:
     - href: index.qmd
       text: "About"
+    - href: stat-stuff.qmd
 
 format:
   html: 
