@@ -21,27 +21,3 @@ My research is supported by the NMFS-Sea Grant Population and Ecosystem Dynamics
 
 ## Current Project
 Currently, I am building a spatio-temporal model of Atlantic menhaden to understand if menhaden distribution has shifted northward and/or offshore in recent years and evaluate the influence of water temperature and prey availability. 
-
-
-<!-- ::: {.column-page-inset .text-center} -->
-<!-- ```{=html} -->
-<!-- <a class="btn btn-outline-dark", href="https://twitter.com/DrewDim" target="_blank" rel="noopener noreferrer"> -->
-<!--     <i class="bi bi-twitter" role='img' aria-label='Twitter'></i> -->
-<!-- </a> -->
-<!-- <a class="btn btn-outline-dark", href="https://github.com/ddimmery" target="_blank" rel="noopener noreferrer"> -->
-<!--     <i class="bi bi-github" role='img' aria-label='Github'></i> -->
-<!-- </a> -->
-<!-- <a class="btn btn-outline-dark", href="https://www.linkedin.com/in/drew-dimmery/" target="_blank" rel="noopener noreferrer"> -->
-<!--     <i class="bi bi-linkedin" role='img' aria-label='LinkedIn'></i> -->
-<!-- </a> -->
-<!-- <a class="btn btn-outline-dark", href="https://scholar.google.com/citations?user=qMfnm48AAAAJ" target="_blank" rel="noopener noreferrer"> -->
-<!--     <i class="ai ai-google-scholar" role='img' aria-label='Google Scholar'></i> -->
-<!-- </a> -->
-<!-- <a class="btn btn-outline-dark", href="https://arxiv.org/a/dimmery_d_1.html" target="_blank" rel="noopener noreferrer"> -->
-<!--     <i class="ai ai-arxiv" role='img' aria-label='arXiv'></i> -->
-<!-- </a> -->
-<!-- <a class="btn btn-outline-dark", href="mailto:pddimmery@gmail.com" target="_blank" rel="noopener noreferrer"> -->
-<!--     <i class="ai bi-envelope" role='img' aria-label='email'></i> -->
-<!-- </a> -->
-<!-- ``` -->
-<!-- ::: -->
