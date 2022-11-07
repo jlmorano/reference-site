@@ -1,7 +1,7 @@
 ---
 title: "Janelle L. Morano's References"
 about: 
-  template: trestles
+  template: jolla
 ---
 
 # Project Overview
