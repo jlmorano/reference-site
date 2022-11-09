@@ -1,0 +1,23 @@
+---
+title: "Janelle L. Morano"
+about:
+  template: trestles
+  image: racoon tweet.png
+  links:
+    - icon: github
+      text: Github
+      href: https://github.com/jlmorano
+---
+
+## About
+
+This is a place for me to save notes and other information for my own reference and use. 
+
+### Janelle L. Morano
+
+**NMFS-Sea Grant Population & Ecosystems Dynamics Fellow** | **PhD Student**
+
+Department of Natural Resources and the Environment
+
+Cornell University | Ithaca, NY USA
+ 

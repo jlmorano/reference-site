@@ -1,0 +1,8 @@
+---
+title: "Janelle's Reference Site"
+about:
+  template: marquee
+  image: menhadenschool.jpeg
+---
+
+This is a place for me to save notes and other information for my own reference and use.
